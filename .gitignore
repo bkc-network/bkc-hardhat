@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.env
+*.tgz
+
+# test output: artifacts, caches and Ignition deployment journals
+example/artifacts/
+example/cache/
+example/ignition/deployments/
