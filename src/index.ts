@@ -55,8 +55,13 @@ function registerExplorer(config: HardhatConfig, name: string, network: HttpNetw
 
   const base = explorer.replace(/\/$/, "");
   const etherscan = ((config as unknown as { etherscan?: EtherscanConfig }).etherscan ??= {});
+
+  // Per network, not a single string: hardhat-verify resolves a custom chain's key from this
+  // map and refuses the string form for one. The deprecation warning it prints alongside is
+  // about Etherscan's own v2 API and does not apply to Blockscout.
   etherscan.apiKey = typeof etherscan.apiKey === "object" ? etherscan.apiKey : {};
-  etherscan.apiKey[name] ??= "blockscout-needs-no-key";
+  etherscan.apiKey[name] ??= PLACEHOLDER_API_KEY;
+
   etherscan.customChains ??= [];
 
   if (etherscan.customChains.some((chain) => chain.network === name)) return;
@@ -67,6 +72,8 @@ function registerExplorer(config: HardhatConfig, name: string, network: HttpNetw
     urls: { apiURL: network.bkc?.explorerApiUrl ?? `${base}/api`, browserURL: base },
   });
 }
+
+const PLACEHOLDER_API_KEY = "blockscout-needs-no-key";
 
 interface EtherscanConfig {
   apiKey?: string | Record<string, string>;
